@@ -17,10 +17,12 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class CustomException {
+
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<?> handleValidationExceptions(AlreadyExistsException exception) {
         return new ResponseEntity<>(List.of(exception.getError()) , HttpStatus.CONFLICT);
     }
+
 
     @ExceptionHandler(DateValidationException.class)
     public ResponseEntity<?> handleDateValidationException(DateValidationException exception) {

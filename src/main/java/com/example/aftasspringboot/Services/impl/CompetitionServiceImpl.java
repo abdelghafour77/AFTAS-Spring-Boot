@@ -134,6 +134,7 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public Page<CompetitionResponse> searchCompetitions(String value, Pageable pageable) {
+        refreshStatus();
         return CompetitionResponse.fromEntities(competitionRepository.findByNameOrCodeOrLocationLike(value, pageable));
 
     }
@@ -225,14 +226,15 @@ public class CompetitionServiceImpl implements CompetitionService {
         for (Competition competition : competitions
         ) {
             LocalDate date = competition.getDate();
+            LocalDate endDate =date.plusDays(1);
             LocalTime startTime = competition.getStartTime();
             LocalTime endTime = competition.getEndTime();
             LocalDate now = LocalDate.now();
             LocalTime nowTime = LocalTime.now();
-            if (date.isBefore(now)) {
+            if (endDate.isBefore(now)) {
                 competition.setStatus("finished");
             } else if (date.isEqual(now)) {
-                if (startTime.isBefore(nowTime) && endTime.isAfter(nowTime)) {
+                if (startTime.isBefore(nowTime) && endTime.isAfter(nowTime) && endDate.isAfter(now) ) {
                     competition.setStatus("ongoing");
                 } else if (startTime.isAfter(nowTime)) {
                     competition.setStatus("upcoming");

@@ -13,4 +13,6 @@ public interface LevelRepository extends JpaRepository<Level, Long>{
     Optional<Level> findByPoints(Integer points);
     Optional<Level> findTopByOrderByIdDesc();
     List<Level> findAll(Specification<Level> specification);
+    Optional<Level> getLevelByCode(Integer code);
+
 }

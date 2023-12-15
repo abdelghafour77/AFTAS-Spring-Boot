@@ -1,35 +1,32 @@
-package com.example.aftasspringboot.entities;
+package com.example.aftasspringboot.dtos.requests;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class Level {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@AllArgsConstructor
+public class LevelRequest {
+
 
     @Column(unique = true)
     @Positive(message = "Code must be positive")
+    @NotNull(message = "Code cannot be null")
     private Integer code;
 
+
+    @NotNull(message = "Description cannot be null")
     private String description;
 
     @Column(unique = true)
     @Positive(message = "Points must be positive")
+    @NotNull(message = "Points cannot be null")
     private Integer points;
 
-    @OneToMany(mappedBy = "level")
-    @JsonIgnoreProperties("level")
-    private List<Fish> fishes;
+
 }

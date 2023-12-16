@@ -1,6 +1,7 @@
 package com.example.aftasspringboot.repositories;
 
 import com.example.aftasspringboot.entities.Member;
+import com.example.aftasspringboot.entities.enums.IdentityDocumentType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,8 +12,9 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+
     Page<Member> findAll(Pageable pageable);
     List<Member> findAll(Specification<Member> specification);
-    Optional<Member> findByIdentityDocumentAndIdentityNumber(Member.IdentityDocumentType identityDocument, String identityNumber);
+    Optional<Member> findByIdentityNumber(String identityNumber);
 
 }

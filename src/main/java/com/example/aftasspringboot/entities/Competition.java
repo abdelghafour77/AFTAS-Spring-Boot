@@ -14,20 +14,24 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners({ AuditingEntityListener.class })
 public class Competition {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true)
     @NotNull(message = "Code cannot be null")
     @NotBlank(message = "Code cannot be blank")
     private String code;
-    private String name;
-    @Column(unique = true)
+
     @NotNull(message = "Name cannot be null")
+    private String name;
+
     @Future(message = "Date must be in the future")
     private LocalDate date;
 
@@ -43,10 +47,8 @@ public class Competition {
 
     @NotNull(message = "Location cannot be null")
     @NotBlank(message = "Location cannot be blank")
-    private String Location;
-    @NotNull(message = "Type cannot be null")
-    private String type;
-    private String status;
+    private String location;
+
 
     @NotNull(message = "Amount cannot be null")
     @PositiveOrZero(message = "Amount must be positive")
@@ -59,13 +61,9 @@ public class Competition {
     @JsonIgnoreProperties("competition")
     private List<Ranking> rankings;
 
-    @OneToMany(mappedBy = "competition")
     @Column(nullable = true)
+    @OneToMany(mappedBy = "competition")
     @JsonIgnoreProperties({"competition"})
     private List<Hunting> huntings;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }

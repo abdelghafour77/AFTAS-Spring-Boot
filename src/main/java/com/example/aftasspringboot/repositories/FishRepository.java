@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FishRepository extends JpaRepository<Fish, Long> {
-    Optional<Fish> findByName(String name);
 
     List<Fish> findAll(Specification<Fish> specification);
+
+    Optional<Fish> findByName(String name);
+
 }

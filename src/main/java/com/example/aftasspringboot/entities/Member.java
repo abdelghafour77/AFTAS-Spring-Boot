@@ -21,15 +21,15 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Name cannot be null")
-    @NotBlank(message = "Name cannot be blank")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Name must only contain letters")
-    private String name;
+    @NotNull(message = "First name cannot be null")
+    @NotBlank(message = "first name cannot be blank")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "First name must only contain letters")
+    private String firstName;
 
-    @NotNull(message = "Family name cannot be null")
-    @NotBlank(message = "Family name cannot be blank")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Family name must only contain letters")
-    private String familyName;
+    @NotNull(message = "Last name cannot be null")
+    @NotBlank(message = "Last name cannot be blank")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name must only contain letters")
+    private String lastName;
 
     @PastOrPresent(message = "Date of accession must be in the past or present")
     @NotNull(message = "Date of accession cannot be null")
@@ -42,7 +42,7 @@ public class Member {
 
     @NotNull(message = "Identity document type cannot be null")
     @Enumerated(EnumType.STRING)
-    private IdentityDocumentType identityDocument;
+    private IdentityDocumentType identityDocumentType;
 
     @NotNull(message = "Identity number cannot be null")
     @NotBlank(message = "Identity number cannot be blank")

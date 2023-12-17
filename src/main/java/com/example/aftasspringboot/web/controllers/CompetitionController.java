@@ -2,6 +2,7 @@ package com.example.aftasspringboot.web.controllers;
 
 import com.example.aftasspringboot.Services.CompetitionService;
 import com.example.aftasspringboot.dtos.requests.CompetitionRequest;
+import com.example.aftasspringboot.dtos.responses.CompetitionResponse;
 import com.example.aftasspringboot.entities.Competition;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class CompetitionController {
     private final CompetitionService competitionService;
 
     @GetMapping
-    public List<Competition> getCompetitions() {
+    public List<CompetitionResponse> getCompetitions() {
         return competitionService.getAllCompetitions();
     }
 
@@ -36,6 +37,11 @@ public class CompetitionController {
     public ResponseEntity<?> getResults(@PathVariable Long competitionId) {
         competitionService.results(competitionId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/status/{status}")
+    public List<CompetitionResponse> getCompetitionsByStatus(@PathVariable String status) {
+        return competitionService.getCompetitionsByStatus(status);
     }
 
 //    @GetMapping("/topthree/{competitionId}")
@@ -65,7 +71,7 @@ public class CompetitionController {
 
     @GetMapping("/search/{value}")
     public ResponseEntity<?> searchCompetitions(@PathVariable String value) {
-        List<Competition> competitions = competitionService.searchCompetitions(value);
+        List<CompetitionResponse> competitions = competitionService.searchCompetitions(value);
         return new ResponseEntity<>(competitions, HttpStatus.OK);
     }
 
@@ -74,4 +80,16 @@ public class CompetitionController {
         competitionService.deleteCompetition(competitionId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping("/register/{competitionCode}/{memberId}")
+    public ResponseEntity<?> register(@PathVariable String competitionCode, @PathVariable Long memberId) {
+        Competition competition = competitionService.register(competitionCode, memberId);
+        return new ResponseEntity<>(competition, HttpStatus.OK);
+    }
+
+//    @GetMapping("/CompetitionWithMembers/{competitionCode}")
+//    public ResponseEntity<?> getCompetitionWithMembers(@PathVariable String competitionCode) {
+//        Competition competition = competitionService.getCompetitionWithMembers(competitionCode);
+//        return new ResponseEntity<>(competition, HttpStatus.OK);
+//    }
 }

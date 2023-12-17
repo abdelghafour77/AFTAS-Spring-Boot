@@ -49,6 +49,7 @@ public class Competition {
     @NotBlank(message = "Location cannot be blank")
     private String location;
 
+    private String status;
 
     @NotNull(message = "Amount cannot be null")
     @PositiveOrZero(message = "Amount must be positive")

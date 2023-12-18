@@ -1,10 +1,12 @@
 package com.example.aftasspringboot.web.controllers;
 
 import com.example.aftasspringboot.Services.CompetitionService;
+import com.example.aftasspringboot.Services.RankingService;
 import com.example.aftasspringboot.dtos.requests.CompetitionRequest;
 import com.example.aftasspringboot.dtos.responses.CompetitionResponse;
 import com.example.aftasspringboot.entities.Competition;
 import com.example.aftasspringboot.entities.Member;
+import com.example.aftasspringboot.entities.Ranking;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CompetitionController {
     private final CompetitionService competitionService;
+    private final RankingService rankingService;
 
     @GetMapping
     public List<CompetitionResponse> getCompetitions() {
@@ -45,12 +48,11 @@ public class CompetitionController {
         return competitionService.getCompetitionsByStatus(status);
     }
 
-//    @GetMapping("/topthree/{competitionId}")
-//    public ResponseEntity<?> getTopThree(@PathVariable Long competitionId) {
-//
-//        Map<Integer, List<Top>> topThree = competitionService.getTopThree(competitionId);
-//        return new ResponseEntity<>(topThree, HttpStatus.OK);
-//    }
+    @GetMapping("/topThree/{competitionCode}")
+    public ResponseEntity<?> getTopThree(@PathVariable String competitionCode) {
+        List<Ranking> topThree = rankingService.getRanking(competitionCode);
+        return new ResponseEntity<>(topThree, HttpStatus.OK);
+    }
 
     @PostMapping()
     public ResponseEntity<?> createCompetition(@Valid @RequestBody CompetitionRequest competitionRequest) {

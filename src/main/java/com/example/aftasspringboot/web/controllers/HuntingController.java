@@ -2,8 +2,10 @@ package com.example.aftasspringboot.web.controllers;
 
 import com.example.aftasspringboot.Services.HuntingService;
 import com.example.aftasspringboot.dtos.requests.HuntingRequest;
+import com.example.aftasspringboot.handler.response.ResponseMessage;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +18,10 @@ public class HuntingController {
     private final HuntingService huntingService;
 
     @PostMapping
-    public void addHunting(@RequestBody @Valid HuntingRequest huntingRequest ) {
-        huntingService.addHunting(huntingRequest);
+    public ResponseEntity addHunting(@RequestBody @Valid HuntingRequest huntingRequest) {
+        return ResponseMessage.created("Hunting record added successfully", huntingService.addHunting(huntingRequest));
     }
+
+
 
 }

@@ -21,7 +21,7 @@ public class HuntingServiceImpl implements HuntingService {
     private final HuntingRepository huntingRepository;
     private final FishRepository fishRepository;
     private final MemberRepository memberRepository;
-private final CompetitionRepository competitionRepository;
+    private final CompetitionRepository competitionRepository;
 
 
     public HuntingServiceImpl(HuntingRepository huntingRepository, FishRepository fishRepository, MemberRepository memberRepository, CompetitionRepository competitionRepository) {
@@ -57,11 +57,12 @@ private final CompetitionRepository competitionRepository;
                 return huntingRepository.save(existingHunt);
             } else {
                 // If a hunting record does not exist, create a new Hunting entity and set numberOfFish to 1
-                Hunting hunting = new Hunting();
-                hunting.setFish(fish);
-                hunting.setMember(member);
-                hunting.setCompetition(competition);
-                hunting.setNumberOfFish(1);
+                Hunting hunting =  Hunting.builder()
+                        .fish(fish)
+                        .member(member)
+                        .competition(competition)
+                        .numberOfFish(1)
+                        .build();
                 return huntingRepository.save(hunting);
             }
         } else {

@@ -16,8 +16,11 @@ import java.util.Optional;
 @Repository
 public interface CompetitionRepository extends JpaRepository<Competition, Long> {
     Competition findByCode(String code);
+
     Page<Competition> findByCode(String code, Pageable pageable);
+
     Optional<Competition> findByDate(LocalDate date);
+
     List<Competition> findAll(Specification<Competition> specification);
 
     @Query("SELECT c FROM Competition c WHERE lower(c.name) LIKE lower(concat('%', :search, '%')) OR lower(c.code) LIKE lower(concat('%', :search, '%')) OR lower(c.location) LIKE lower(concat('%', :search, '%'))")
@@ -25,5 +28,10 @@ public interface CompetitionRepository extends JpaRepository<Competition, Long> 
 
     @Query("SELECT c FROM Competition c WHERE lower(c.status) LIKE lower(concat('%', :status, '%'))")
     List<Competition> findByStatus(@Param("status") String status);
+
+    //    get the big ranking of a competition
+    @Query("SELECT r FROM Ranking r WHERE r.competition.id = :competitionId")
+    List<Competition> findLastRanking(@Param("competitionId") Long competitionId);
+
 
 }

@@ -32,7 +32,7 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public List<CompetitionResponse> getAllCompetitions() {
-       return CompetitionResponse.fromEntities(competitionRepository.findAll());
+        return CompetitionResponse.fromEntities(competitionRepository.findAll());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public Competition getCompetitionById(Long id) {
-        if(competitionRepository.findById(id).isPresent())
+        if (competitionRepository.findById(id).isPresent())
             return competitionRepository.findById(id).get();
         else
             throw new RuntimeException("Competition not found");
@@ -50,7 +50,7 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public Competition getCompetitionByCode(String code) {
-        if(competitionRepository.findByCode(code) != null)
+        if (competitionRepository.findByCode(code) != null)
             return competitionRepository.findByCode(code);
         else
             throw new RuntimeException("Competition not found");
@@ -60,44 +60,45 @@ public class CompetitionServiceImpl implements CompetitionService {
     @Override
     public Competition createCompetition(CompetitionRequest competitionRequest) {
 
-        if(competitionRequest.getDate().isBefore(java.time.LocalDate.now()))
+        if (competitionRequest.getDate().isBefore(java.time.LocalDate.now()))
             throw new RuntimeException("Date must be in the future");
         if (competitionRequest.getStartTime().isAfter(competitionRequest.getEndTime()))
             throw new RuntimeException("Start time must be before end time");
-        if(competitionRequest.getDate().isBefore(java.time.LocalDate.now().plusDays(2)))
+        if (competitionRequest.getDate().isBefore(java.time.LocalDate.now().plusDays(2)))
             throw new RuntimeException("Date must be within 2 days");
-        else{
+        else {
             String code = generateCode(competitionRequest.getLocation(), competitionRequest.getDate());
             if (competitionRepository.findByCode(code) != null)
                 throw new RuntimeException("Competition with this code already exists");
-            else{
-            Competition competition = Competition.builder()
-                    .code(code)
-                    .date(competitionRequest.getDate())
-                    .name(competitionRequest.getName())
-                    .description(competitionRequest.getDescription())
-                    .startTime(competitionRequest.getStartTime())
-                    .endTime(competitionRequest.getEndTime())
-                    .status("OPEN")
-                    .numberOfParticipants(competitionRequest.getNumberOfParticipants())
-                    .location(competitionRequest.getLocation())
-                    .price(competitionRequest.getPrice())
-                    .build();
+            else {
+                Competition competition = Competition.builder()
+                        .code(code)
+                        .date(competitionRequest.getDate())
+                        .name(competitionRequest.getName())
+                        .description(competitionRequest.getDescription())
+                        .startTime(competitionRequest.getStartTime())
+                        .endTime(competitionRequest.getEndTime())
+                        .status("OPEN")
+                        .numberOfParticipants(competitionRequest.getNumberOfParticipants())
+                        .location(competitionRequest.getLocation())
+                        .price(competitionRequest.getPrice())
+                        .build();
 
-            return competitionRepository.save(competition);}
+                return competitionRepository.save(competition);
+            }
         }
     }
 
     @Override
     public Competition updateCompetition(CompetitionRequest competition, Long competitionId) {
 
-        if(competition.getDate().isBefore(java.time.LocalDate.now()))
+        if (competition.getDate().isBefore(java.time.LocalDate.now()))
             throw new RuntimeException("Date must be in the future");
         if (competition.getStartTime().isAfter(competition.getEndTime()))
             throw new RuntimeException("Start time must be before end time");
-        if(competition.getDate().isBefore(java.time.LocalDate.now().plusDays(2)))
+        if (competition.getDate().isBefore(java.time.LocalDate.now().plusDays(2)))
             throw new RuntimeException("Date must be within 2 days");
-        else{
+        else {
             Competition competition1 = competitionRepository.findById(competitionId).orElseThrow(() -> new RuntimeException("Competition not found"));
             competition1.setDate(competition.getDate());
             competition1.setName(competition.getName());
@@ -131,27 +132,29 @@ public class CompetitionServiceImpl implements CompetitionService {
     public List<CompetitionResponse> searchCompetitions(String value) {
         return CompetitionResponse.fromEntities(competitionRepository.findByNameOrCodeOrLocationLike(value));
     }
+
     @Override
     public List<CompetitionResponse> getCompetitionsByStatus(String status) {
-       return CompetitionResponse.fromEntities(competitionRepository.findByStatus(status));
+        return CompetitionResponse.fromEntities(competitionRepository.findByStatus(status));
     }
 
     @Override
     public Competition register(String code, Long memberId) {
         Competition competition = competitionRepository.findByCode(code);
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("Member not found"));
-        if(competition == null)
+        if (competition == null)
             throw new RuntimeException("Competition not found");
-        if(competition.getNumberOfParticipants() == competition.getRankings().size())
+        if (competition.getNumberOfParticipants() == competition.getRankings().size())
             throw new RuntimeException("Competition is full");
-        if(competition.getRankings().stream().anyMatch(ranking -> ranking.getMember().getId().equals(memberId)))
+        if (competition.getRankings().stream().anyMatch(ranking -> ranking.getMember().getId().equals(memberId)))
             throw new RuntimeException("Member already registered");
         else {
+            int rank = competition.getRankings().size() + 1;
             Ranking ranking = Ranking.builder()
                     .competition(competition)
                     .member(member)
                     .score(0)
-                    .rank(100)
+                    .rank(rank)
                     .build();
             rankingRepository.save(ranking);
         }
@@ -161,11 +164,55 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
-    public Competition getCompetitionWithMembers(String code) {
-        Competition competition = competitionRepository.findByCode(code);
+    public List<Member> getParticipants(String code) {
 
-        return competition;
+        // Get the competition by its code
+        Competition competition = competitionRepository.findByCode(code);
+        if (competition == null) {
+            throw new RuntimeException("Competition not found");
+        }
+
+        // Get all the members who are registered in this competition
+        List<Member> registeredMembers = competition.getRankings().stream()
+                .map(Ranking::getMember)
+                .map(member -> memberRepository.findById(member.getId()).get())
+                .toList();
+
+        // Get all the members
+        List<Member> allMembers = memberRepository.findAll();
+
+        // Filter out the members who are registered in the competition
+
+        return allMembers.stream()
+                .filter(member -> !registeredMembers.contains(member))
+                .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Member> getParticipantsWithSearch(String code, String search) {
+
+        // Get the competition by its code
+        Competition competition = competitionRepository.findByCode(code);
+        if (competition == null) {
+            throw new RuntimeException("Competition not found");
+        }
+
+        // Get all the members who are registered in this competition
+        List<Member> registeredMembers = competition.getRankings().stream()
+                .map(Ranking::getMember)
+                .map(member -> memberRepository.findById(member.getId()).get())
+                .toList();
+
+        // Get all the members
+        List<Member> allMembers = memberRepository.findByCriteria(search);
+
+        // Filter out the members who are registered in the competition
+
+        return allMembers.stream()
+                .filter(member -> !registeredMembers.contains(member))
+                .collect(Collectors.toList());
+    }
+
 
     public static String generateCode(String location, LocalDate date) {
         String locationCode = location.substring(0, Math.min(location.length(), 3)).toLowerCase();

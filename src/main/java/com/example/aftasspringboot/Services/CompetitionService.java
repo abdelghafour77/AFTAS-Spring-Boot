@@ -3,6 +3,7 @@ package com.example.aftasspringboot.Services;
 import com.example.aftasspringboot.dtos.requests.CompetitionRequest;
 import com.example.aftasspringboot.dtos.responses.CompetitionResponse;
 import com.example.aftasspringboot.entities.Competition;
+import com.example.aftasspringboot.entities.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -37,5 +38,7 @@ public interface CompetitionService {
 
     public Competition register(String code, Long memberId);
 
-    public Competition getCompetitionWithMembers(String code);
+    public List<Member> getParticipants(String code);
+
+    public List<Member> getParticipantsWithSearch(String code , String search);
 }

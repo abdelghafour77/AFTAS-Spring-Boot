@@ -4,6 +4,7 @@ import com.example.aftasspringboot.Services.CompetitionService;
 import com.example.aftasspringboot.dtos.requests.CompetitionRequest;
 import com.example.aftasspringboot.dtos.responses.CompetitionResponse;
 import com.example.aftasspringboot.entities.Competition;
+import com.example.aftasspringboot.entities.Member;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -73,6 +74,15 @@ public class CompetitionController {
     public ResponseEntity<?> searchCompetitions(@PathVariable String value) {
         List<CompetitionResponse> competitions = competitionService.searchCompetitions(value);
         return new ResponseEntity<>(competitions, HttpStatus.OK);
+    }
+
+    @GetMapping("/registered-members/{competitionCode}")
+    public ResponseEntity<?> getParticipants(@PathVariable String competitionCode) {
+        return new ResponseEntity<>(competitionService.getParticipants(competitionCode), HttpStatus.OK);
+    }
+    @GetMapping("/registered-members/{competitionCode}/{search}")
+    public ResponseEntity<?> getParticipantsWithSearch(@PathVariable String competitionCode , @PathVariable String search) {
+        return new ResponseEntity<>(competitionService.getParticipantsWithSearch(competitionCode , search), HttpStatus.OK);
     }
 
     @DeleteMapping("/{competitionId}")

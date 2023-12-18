@@ -20,8 +20,8 @@ Before you start, make sure you have the following prerequisites installed on yo
 1. Clone the repository to your local machine:
 
     ```bash
-    git clone https://github.com/SuperGhostSama/AFTAS-API.git
-    cd AFTAS-API
+    git clone https://github.com/abdelghafour77/AFTAS-Spring-Boot
+    cd AFTAS-Spring-Boot
     ```
 
 2. Open the `application.properties` file in the `src/main/resources` directory.
@@ -39,7 +39,7 @@ Before you start, make sure you have the following prerequisites installed on yo
 1. Create a MySQL database for AFTAS:
 
     ```sql
-    CREATE DATABASE aftas-v1;
+    CREATE DATABASE aftas;
     ```
 
 2. The application will automatically create tables based on the entity models when you run it.

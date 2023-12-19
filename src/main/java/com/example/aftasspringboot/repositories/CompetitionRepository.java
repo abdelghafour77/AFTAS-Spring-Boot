@@ -15,6 +15,9 @@ import java.util.Optional;
 
 @Repository
 public interface CompetitionRepository extends JpaRepository<Competition, Long> {
+
+    Page<Competition> findAll(Pageable pageable);
+
     Competition findByCode(String code);
 
     Page<Competition> findByCode(String code, Pageable pageable);
@@ -24,10 +27,10 @@ public interface CompetitionRepository extends JpaRepository<Competition, Long> 
     List<Competition> findAll(Specification<Competition> specification);
 
     @Query("SELECT c FROM Competition c WHERE lower(c.name) LIKE lower(concat('%', :search, '%')) OR lower(c.code) LIKE lower(concat('%', :search, '%')) OR lower(c.location) LIKE lower(concat('%', :search, '%'))")
-    List<Competition> findByNameOrCodeOrLocationLike(@Param("search") String search);
+    Page<Competition> findByNameOrCodeOrLocationLike(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT c FROM Competition c WHERE lower(c.status) LIKE lower(concat('%', :status, '%'))")
-    List<Competition> findByStatus(@Param("status") String status);
+    Page<Competition> findByStatus(@Param("status") String status, Pageable pageable);
 
     //    get the big ranking of a competition
     @Query("SELECT r FROM Ranking r WHERE r.competition.id = :competitionId")

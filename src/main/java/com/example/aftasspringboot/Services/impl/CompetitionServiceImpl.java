@@ -33,15 +33,12 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
-    public List<CompetitionResponse> getAllCompetitions() {
+    public Page<CompetitionResponse> getAllCompetitions(Pageable pageable) {
         refreshStatus();
-        return CompetitionResponse.fromEntities(competitionRepository.findAll());
+        Page<Competition> competitions = competitionRepository.findAll(pageable);
+        return competitions.map(CompetitionResponse::fromEntity);
     }
 
-    @Override
-    public Page<Competition> getAllCompetitionsWithPagination(Pageable pageable) {
-        return null;
-    }
 
     @Override
     public Competition getCompetitionById(Long id) {
@@ -126,20 +123,18 @@ public class CompetitionServiceImpl implements CompetitionService {
     public void results(Long id) {
 
     }
-//
-//    @Override
-//    public List<Competition> searchCompetitionsByCriteria(List<FilterDTO> filters) {
-//        return null;
-//    }
+
 
     @Override
-    public List<CompetitionResponse> searchCompetitions(String value) {
-        return CompetitionResponse.fromEntities(competitionRepository.findByNameOrCodeOrLocationLike(value));
+    public Page<CompetitionResponse> searchCompetitions(String value, Pageable pageable) {
+        return CompetitionResponse.fromEntities(competitionRepository.findByNameOrCodeOrLocationLike(value, pageable));
+
     }
 
     @Override
-    public List<CompetitionResponse> getCompetitionsByStatus(String status) {
-        return CompetitionResponse.fromEntities(competitionRepository.findByStatus(status));
+    public Page<CompetitionResponse> getCompetitionsByStatus(String status, Pageable pageable) {
+       return   CompetitionResponse.fromEntities(competitionRepository.findByStatus(status, pageable));
+
     }
 
     @Override

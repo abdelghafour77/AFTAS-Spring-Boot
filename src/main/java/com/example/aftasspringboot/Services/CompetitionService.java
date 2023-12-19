@@ -10,35 +10,28 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface CompetitionService {
-    public List<CompetitionResponse> getAllCompetitions();
 
-    public Page<Competition> getAllCompetitionsWithPagination(Pageable pageable);
+    public Page<CompetitionResponse> getAllCompetitions(Pageable pageable);
 
     public Competition getCompetitionById(Long id);
 
     public Competition getCompetitionByCode(String code);
 
-//    public List<Member> getParticipants(Competition competition);
-
     public Competition createCompetition(CompetitionRequest competitionRequest);
 
-    public Competition updateCompetition(CompetitionRequest competition , Long competitionId);
+    public Competition updateCompetition(CompetitionRequest competition, Long competitionId);
 
     public void deleteCompetition(Long id);
 
     public void results(Long id);
 
-//    public Map<Integer, List<Top>> getTopThree(Long competitionId);
+    public Page<CompetitionResponse> searchCompetitions(String value, Pageable pageable);
 
-//    public List<Competition> searchCompetitionsByCriteria(List<FilterDTO> filters);
-
-    public List<CompetitionResponse> searchCompetitions(String value);
-
-    public List<CompetitionResponse> getCompetitionsByStatus(String status);
+    public Page<CompetitionResponse> getCompetitionsByStatus(String status, Pageable pageable);
 
     public Competition register(String code, Long memberId);
 
     public List<Member> getParticipants(String code);
 
-    public List<Member> getParticipantsWithSearch(String code , String search);
+    public List<Member> getParticipantsWithSearch(String code, String search);
 }

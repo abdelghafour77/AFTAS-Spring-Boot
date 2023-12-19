@@ -32,7 +32,7 @@ public class Competition {
     @NotNull(message = "Name cannot be null")
     private String name;
 
-    @Future(message = "Date must be in the future")
+//    @Future(message = "Date must be in the future")
     private LocalDate date;
 
     @NotNull(message = "Start time cannot be null")

@@ -5,8 +5,11 @@ import com.example.aftasspringboot.Services.RankingService;
 import com.example.aftasspringboot.dtos.requests.CompetitionRequest;
 import com.example.aftasspringboot.dtos.responses.CompetitionResponse;
 import com.example.aftasspringboot.entities.Competition;
-import com.example.aftasspringboot.entities.Member;
 import com.example.aftasspringboot.entities.Ranking;
+
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,12 +26,12 @@ public class CompetitionController {
     private final RankingService rankingService;
 
     @GetMapping
-    public List<CompetitionResponse> getCompetitions() {
-        return competitionService.getAllCompetitions();
+    public Page<CompetitionResponse> getCompetitions(@ParameterObject Pageable pageable) {
+        return competitionService.getAllCompetitions(pageable);
     }
 
     @GetMapping("/{competitionId}")
-    public Competition getCompetition(@PathVariable Long competitionId) {
+    public Competition getCompetition( @PathVariable Long competitionId) {
         return competitionService.getCompetitionById(competitionId);
     }
 
@@ -44,8 +47,8 @@ public class CompetitionController {
     }
 
     @GetMapping("/status/{status}")
-    public List<CompetitionResponse> getCompetitionsByStatus(@PathVariable String status) {
-        return competitionService.getCompetitionsByStatus(status);
+    public Page<CompetitionResponse> getCompetitionsByStatus(@PathVariable String status,@ParameterObject Pageable pageable) {
+        return competitionService.getCompetitionsByStatus(status,pageable);
     }
 
     @GetMapping("/topThree/{competitionCode}")
@@ -66,16 +69,10 @@ public class CompetitionController {
         return new ResponseEntity<>(updatedCompetition, HttpStatus.OK);
     }
 
-//    @PostMapping("/searchByCriteria")
-//    public ResponseEntity<?> searchCompetitionsByCriteria(@RequestBody List<FilterDTO> filters) {
-//        List<Competition> competitions = competitionService.searchCompetitionsByCriteria(filters);
-//        return new ResponseEntity<>(competitions, HttpStatus.OK);
-//    }
-
     @GetMapping("/search/{value}")
-    public ResponseEntity<?> searchCompetitions(@PathVariable String value) {
-        List<CompetitionResponse> competitions = competitionService.searchCompetitions(value);
-        return new ResponseEntity<>(competitions, HttpStatus.OK);
+    public Page<CompetitionResponse> searchCompetitions(@PathVariable String value ,@ParameterObject Pageable pageable) {
+        return competitionService.searchCompetitions(value, pageable);
+
     }
 
     @GetMapping("/registered-members/{competitionCode}")
@@ -99,9 +96,4 @@ public class CompetitionController {
         return new ResponseEntity<>(competition, HttpStatus.OK);
     }
 
-//    @GetMapping("/CompetitionWithMembers/{competitionCode}")
-//    public ResponseEntity<?> getCompetitionWithMembers(@PathVariable String competitionCode) {
-//        Competition competition = competitionService.getCompetitionWithMembers(competitionCode);
-//        return new ResponseEntity<>(competition, HttpStatus.OK);
-//    }
 }

@@ -9,10 +9,16 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Builder
 @Getter
 @Setter
@@ -56,9 +62,12 @@ public class CompetitionResponse {
                 .description(competition.getDescription())
                 .build();
     }
-    public static List<CompetitionResponse> fromEntities(List<Competition> competitions) {
-        return competitions.stream()
+    public static Page<CompetitionResponse> fromEntities(Page<Competition> competitions) {
+        List<CompetitionResponse> competitionResponses = competitions.stream()
                 .map(CompetitionResponse::fromEntity)
-                .toList();
+                .collect(Collectors.toList());
+
+        Pageable pageable = PageRequest.of(0, competitionResponses.size());
+        return new PageImpl<>(competitionResponses, pageable, competitionResponses.size());
     }
 }

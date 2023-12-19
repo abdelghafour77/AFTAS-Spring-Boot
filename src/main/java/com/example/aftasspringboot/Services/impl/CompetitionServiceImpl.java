@@ -5,6 +5,7 @@ import com.example.aftasspringboot.dtos.requests.CompetitionRequest;
 import com.example.aftasspringboot.dtos.responses.CompetitionResponse;
 import com.example.aftasspringboot.entities.Competition;
 import com.example.aftasspringboot.entities.Member;
+import com.example.aftasspringboot.entities.RankId;
 import com.example.aftasspringboot.entities.Ranking;
 import com.example.aftasspringboot.repositories.CompetitionRepository;
 import com.example.aftasspringboot.repositories.MemberRepository;
@@ -151,6 +152,7 @@ public class CompetitionServiceImpl implements CompetitionService {
         else {
             int rank = competition.getRankings().size() + 1;
             Ranking ranking = Ranking.builder()
+                    .id(RankId.builder().competitionId(member.getId()).competitionId(competition.getId()).build())
                     .competition(competition)
                     .member(member)
                     .score(0)

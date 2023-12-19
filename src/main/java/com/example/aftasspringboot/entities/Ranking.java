@@ -15,9 +15,8 @@ import lombok.*;
 @AllArgsConstructor
 public class Ranking {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private RankId id;
 
     @Positive(message = "Rank must be positive")
     private Integer rank;
@@ -27,12 +26,14 @@ public class Ranking {
     private Integer score;
 
     @ManyToOne
+    @MapsId("memberId")
     @JoinColumn(name = "member_id")
     @NotNull(message = "Member cannot be null")
     @JsonIgnoreProperties({"rankings"})
     private Member member;
 
     @ManyToOne
+    @MapsId("competitionId")
     @JoinColumn(name = "competition_id")
     @NotNull(message = "Competition cannot be null")
     @JsonIgnoreProperties({"rankings" , "huntings"})

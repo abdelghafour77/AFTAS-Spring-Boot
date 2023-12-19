@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public List<CompetitionResponse> getAllCompetitions() {
+        refreshStatus();
         return CompetitionResponse.fromEntities(competitionRepository.findAll());
     }
 
@@ -43,6 +45,7 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public Competition getCompetitionById(Long id) {
+//        refreshStatus();
         if (competitionRepository.findById(id).isPresent())
             return competitionRepository.findById(id).get();
         else
@@ -215,6 +218,31 @@ public class CompetitionServiceImpl implements CompetitionService {
                 .collect(Collectors.toList());
     }
 
+    public void refreshStatus() {
+        List<Competition> competitions = competitionRepository.findAll();
+        for (Competition competition : competitions
+        ) {
+            LocalDate date = competition.getDate();
+            LocalTime startTime = competition.getStartTime();
+            LocalTime endTime = competition.getEndTime();
+            LocalDate now = LocalDate.now();
+            LocalTime nowTime = LocalTime.now();
+            if (date.isBefore(now)) {
+                competition.setStatus("finished");
+            } else if (date.isEqual(now)) {
+                if (startTime.isBefore(nowTime) && endTime.isAfter(nowTime)) {
+                    competition.setStatus("ongoing");
+                } else if (startTime.isAfter(nowTime)) {
+                    competition.setStatus("upcoming");
+                } else {
+                    competition.setStatus("finished");
+                }
+            } else {
+                competition.setStatus("upcoming");
+            }
+            competitionRepository.save(competition);
+        }
+    }
 
     public static String generateCode(String location, LocalDate date) {
         String locationCode = location.substring(0, Math.min(location.length(), 3)).toLowerCase();

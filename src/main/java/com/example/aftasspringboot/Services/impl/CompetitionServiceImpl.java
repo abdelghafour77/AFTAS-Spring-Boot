@@ -7,6 +7,7 @@ import com.example.aftasspringboot.entities.Competition;
 import com.example.aftasspringboot.entities.Member;
 import com.example.aftasspringboot.entities.RankId;
 import com.example.aftasspringboot.entities.Ranking;
+import com.example.aftasspringboot.handler.exception.costumExceptions.ValidationException;
 import com.example.aftasspringboot.repositories.CompetitionRepository;
 import com.example.aftasspringboot.repositories.MemberRepository;
 import com.example.aftasspringboot.repositories.RankingRepository;
@@ -52,7 +53,7 @@ public class CompetitionServiceImpl implements CompetitionService {
         if (competitionRepository.findById(id).isPresent())
             return competitionRepository.findById(id).get();
         else
-            throw new RuntimeException("Competition not found");
+            throw new ValidationException("Competition not found");
     }
 
     @Override
@@ -60,7 +61,7 @@ public class CompetitionServiceImpl implements CompetitionService {
         if (competitionRepository.findByCode(code) != null)
             return competitionRepository.findByCode(code);
         else
-            throw new RuntimeException("Competition not found");
+            throw new ValidationException("Competition not found");
     }
 
 
@@ -68,15 +69,15 @@ public class CompetitionServiceImpl implements CompetitionService {
     public Competition createCompetition(CompetitionRequest competitionRequest) {
 
         if (competitionRequest.getDate().isBefore(java.time.LocalDate.now()))
-            throw new RuntimeException("Date must be in the future");
+            throw new ValidationException("Date must be in the future");
         if (competitionRequest.getStartTime().isAfter(competitionRequest.getEndTime()))
-            throw new RuntimeException("Start time must be before end time");
+            throw new ValidationException("Start time must be before end time");
         if (competitionRequest.getDate().isBefore(java.time.LocalDate.now().plusDays(2)))
-            throw new RuntimeException("Date must be within 2 days");
+            throw new ValidationException("Date must be within 2 days");
         else {
             String code = generateCode(competitionRequest.getLocation(), competitionRequest.getDate());
             if (competitionRepository.findByCode(code) != null)
-                throw new RuntimeException("Competition with this code already exists");
+                throw new ValidationException("Competition with this code already exists");
             else {
                 Competition competition = Competition.builder()
                         .code(code)
@@ -100,13 +101,13 @@ public class CompetitionServiceImpl implements CompetitionService {
     public Competition updateCompetition(CompetitionRequest competition, Long competitionId) {
 
         if (competition.getDate().isBefore(java.time.LocalDate.now()))
-            throw new RuntimeException("Date must be in the future");
+            throw new ValidationException("Date must be in the future");
         if (competition.getStartTime().isAfter(competition.getEndTime()))
-            throw new RuntimeException("Start time must be before end time");
+            throw new ValidationException("Start time must be before end time");
         if (competition.getDate().isBefore(java.time.LocalDate.now().plusDays(2)))
-            throw new RuntimeException("Date must be within 2 days");
+            throw new ValidationException("Date must be within 2 days");
         else {
-            Competition competition1 = competitionRepository.findById(competitionId).orElseThrow(() -> new RuntimeException("Competition not found"));
+            Competition competition1 = competitionRepository.findById(competitionId).orElseThrow(() -> new ValidationException("Competition not found"));
             competition1.setDate(competition.getDate());
             competition1.setName(competition.getName());
             competition1.setDescription(competition.getDescription());
@@ -121,7 +122,7 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public void deleteCompetition(Long id) {
-        competitionRepository.findById(id).orElseThrow(() -> new RuntimeException("Competition not found"));
+        competitionRepository.findById(id).orElseThrow(() -> new ValidationException("Competition not found"));
         competitionRepository.deleteById(id);
     }
 
@@ -146,13 +147,13 @@ public class CompetitionServiceImpl implements CompetitionService {
     @Override
     public Competition register(String code, Long memberId) {
         Competition competition = competitionRepository.findByCode(code);
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("Member not found"));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new ValidationException("Member not found"));
         if (competition == null)
-            throw new RuntimeException("Competition not found");
+            throw new ValidationException("Competition not found");
         if (competition.getNumberOfParticipants() == competition.getRankings().size())
-            throw new RuntimeException("Competition is full");
+            throw new ValidationException("Competition is full");
         if (competition.getRankings().stream().anyMatch(ranking -> ranking.getMember().getId().equals(memberId)))
-            throw new RuntimeException("Member already registered");
+            throw new ValidationException("Member already registered");
         else {
             int rank = competition.getRankings().size() + 1;
             Ranking ranking = Ranking.builder()
@@ -175,7 +176,7 @@ public class CompetitionServiceImpl implements CompetitionService {
         // Get the competition by its code
         Competition competition = competitionRepository.findByCode(code);
         if (competition == null) {
-            throw new RuntimeException("Competition not found");
+            throw new ValidationException("Competition not found");
         }
 
         // Get all the members who are registered in this competition
@@ -200,7 +201,7 @@ public class CompetitionServiceImpl implements CompetitionService {
         // Get the competition by its code
         Competition competition = competitionRepository.findByCode(code);
         if (competition == null) {
-            throw new RuntimeException("Competition not found");
+            throw new ValidationException("Competition not found");
         }
 
         // Get all the members who are registered in this competition

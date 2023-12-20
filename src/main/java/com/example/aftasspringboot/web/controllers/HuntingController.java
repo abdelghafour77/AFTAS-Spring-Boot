@@ -2,6 +2,7 @@ package com.example.aftasspringboot.web.controllers;
 
 import com.example.aftasspringboot.Services.HuntingService;
 import com.example.aftasspringboot.dtos.requests.HuntingRequest;
+import com.example.aftasspringboot.entities.Hunting;
 import com.example.aftasspringboot.handler.response.ResponseMessage;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,8 +19,8 @@ public class HuntingController {
     private final HuntingService huntingService;
 
     @PostMapping
-    public ResponseEntity addHunting(@RequestBody @Valid HuntingRequest huntingRequest) {
-        return ResponseMessage.created("Hunting record added successfully", huntingService.addHunting(huntingRequest));
+    public Hunting addHunting(@RequestBody @Valid HuntingRequest huntingRequest) {
+        return huntingService.addHunting(huntingRequest);
     }
 
 

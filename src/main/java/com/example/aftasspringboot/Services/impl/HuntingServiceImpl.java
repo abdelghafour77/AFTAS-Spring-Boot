@@ -3,6 +3,7 @@ package com.example.aftasspringboot.Services.impl;
 import com.example.aftasspringboot.Services.HuntingService;
 import com.example.aftasspringboot.dtos.requests.HuntingRequest;
 import com.example.aftasspringboot.entities.*;
+import com.example.aftasspringboot.handler.exception.costumExceptions.ValidationException;
 import com.example.aftasspringboot.repositories.*;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class HuntingServiceImpl implements HuntingService {
     public Hunting addHunting(HuntingRequest huntingRequest) {
         // Retrieve the average weight of the fish
         Fish fish = fishRepository.findById(huntingRequest.getFishId())
-                .orElseThrow(() -> new RuntimeException("Fish not found"));
+                .orElseThrow(() -> new  ValidationException("Fish not found"));
 
         Double avgWeight = fish.getAvgWeight();
 
@@ -40,14 +41,14 @@ public class HuntingServiceImpl implements HuntingService {
         if (huntingRequest.getWeightOfHuntedFish() > avgWeight) {
             // Check if a hunting record already exists for this fish
             Member member = memberRepository.findById(huntingRequest.getMemberId())
-                    .orElseThrow(() -> new RuntimeException("Member not found"));
+                    .orElseThrow(() -> new ValidationException("Member not found"));
 
             Competition competition = competitionRepository.findById(huntingRequest.getCompetitionId())
-                    .orElseThrow(() -> new RuntimeException("Competition not found"));
+                    .orElseThrow(() -> new ValidationException("Competition not found"));
 
             Optional<Hunting> existingHunting = huntingRepository.findByCompetitionAndMemberAndFish(competition, member, fish);
             Ranking ranking = rankingRepository.findByMemberAndCompetition(member, competition)
-                    .orElseThrow(() -> new RuntimeException("Ranking not found"));
+                    .orElseThrow(() -> new ValidationException("Ranking not found"));
             if (existingHunting.isPresent()) {
                 // If a hunting record exists, increment the numberOfFish
                 Hunting existingHunt = existingHunting.get();
@@ -72,7 +73,7 @@ public class HuntingServiceImpl implements HuntingService {
                 return huntingRepository.save(hunting);
             }
         } else {
-            throw new RuntimeException("The weight of the hunted fish is less than the average weight");
+            throw new ValidationException("The weight of the hunted fish is less than the average weight");
         }
     }
 

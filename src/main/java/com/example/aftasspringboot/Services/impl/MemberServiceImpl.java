@@ -3,6 +3,7 @@ package com.example.aftasspringboot.Services.impl;
 import com.example.aftasspringboot.Services.MemberService;
 import com.example.aftasspringboot.dtos.requests.MemberRequest;
 import com.example.aftasspringboot.entities.Member;
+import com.example.aftasspringboot.handler.exception.costumExceptions.ValidationException;
 import com.example.aftasspringboot.repositories.MemberRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class MemberServiceImpl implements MemberService {
         if(memberRepository.findById(id).isPresent())
             return memberRepository.findById(id).get();
         else
-            throw new RuntimeException("Member not found");
+            throw new ValidationException("Member not found");
     }
 
     @Override
@@ -39,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member createMember(MemberRequest memberRequest) {
         if(memberRepository.findByIdentityNumber(memberRequest.getIdentityNumber()).isPresent())
-            throw new RuntimeException("Member already exists");
+            throw new ValidationException("Member already exists");
         else{
             Member member = Member.builder()
                     .firstName(memberRequest.getFirstName())
@@ -69,7 +70,7 @@ public class MemberServiceImpl implements MemberService {
             return memberRepository.save(member1);
         }
         else
-            throw new RuntimeException("Member not found");
+            throw new ValidationException("Member not found");
     }
 
     @Override
@@ -77,7 +78,7 @@ public class MemberServiceImpl implements MemberService {
         if(memberRepository.findById(id).isPresent())
             memberRepository.deleteById(id);
         else
-            throw new RuntimeException("Member not found");
+            throw new ValidationException("Member not found");
 
     }
 

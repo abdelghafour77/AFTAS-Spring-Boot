@@ -26,8 +26,12 @@ public class CompetitionController {
     private final RankingService rankingService;
 
     @GetMapping
-    public Page<CompetitionResponse> getCompetitions(@ParameterObject Pageable pageable) {
-        return competitionService.getAllCompetitions(pageable);
+    public List<Competition> getCompetitions() {
+        return competitionService.getAllCompetitions();
+    }
+    @GetMapping("/pageable")
+    public Page<CompetitionResponse> getPageableCompetitions(@ParameterObject Pageable pageable) {
+        return competitionService.getAllPageableCompetitions(pageable);
     }
 
     @GetMapping("/{competitionId}")

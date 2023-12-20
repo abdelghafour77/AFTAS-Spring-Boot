@@ -33,7 +33,13 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
-    public Page<CompetitionResponse> getAllCompetitions(Pageable pageable) {
+    public List<Competition> getAllCompetitions() {
+        refreshStatus();
+        return competitionRepository.findAll();
+    }
+
+    @Override
+    public Page<CompetitionResponse> getAllPageableCompetitions(Pageable pageable) {
         refreshStatus();
         Page<Competition> competitions = competitionRepository.findAll(pageable);
         return competitions.map(CompetitionResponse::fromEntity);

@@ -63,6 +63,7 @@ public class CompetitionResponse {
                 .build();
     }
     public static Page<CompetitionResponse> fromEntities(Page<Competition> competitions) {
+
         List<CompetitionResponse> competitionResponses = competitions.stream()
                 .map(CompetitionResponse::fromEntity)
                 .collect(Collectors.toList());

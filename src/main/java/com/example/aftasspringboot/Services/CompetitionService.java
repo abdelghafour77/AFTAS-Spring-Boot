@@ -11,7 +11,9 @@ import java.util.List;
 
 public interface CompetitionService {
 
-    public Page<CompetitionResponse> getAllCompetitions(Pageable pageable);
+    public List<Competition> getAllCompetitions();
+
+    public Page<CompetitionResponse> getAllPageableCompetitions(Pageable pageable);
 
     public Competition getCompetitionById(Long id);
 
